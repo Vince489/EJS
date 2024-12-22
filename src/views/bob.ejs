@@ -169,6 +169,9 @@
         generatedImages.prepend(container); // Add to the top
         ensure12Items(); // Enforce 12 items in the grid
         saveGeneratedImagesToLocalStorage();
+
+        // Smoothly scroll to the newly added item
+        container.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function saveGeneratedImagesToLocalStorage() {
@@ -200,6 +203,9 @@
         spinner.className = "loader"; // Spinner class from the <style>
         container.appendChild(spinner);
         generatedImages.prepend(container);
+
+        // Smoothly scroll to the spinner container
+        container.scrollIntoView({ behavior: "smooth", block: "center" });
 
         // Simulate image generation
         setTimeout(() => {
@@ -237,5 +243,6 @@
 
     window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
 </script>
+
 
 
