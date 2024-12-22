@@ -81,6 +81,12 @@
             </button>
         </div>
 
+        <!-- Spinner -->
+        <div id="spinner" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+            <div class="w-16 h-16 border-4 border-blue-500 border-solid border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+
         <!-- Right Column -->
         <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 p-2 border border-gray-700 rounded-lg h-auto md:h-[calc(100vh-2rem)] md:overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800" id="generatedImages">
             <!-- Placeholders -->
@@ -194,34 +200,43 @@
     });
 
     generateButton.addEventListener("click", () => {
-        if (!uploadedImage.src) {
-            alert("Please upload an image before generating pixel art!");
-            return;
+    if (!uploadedImage.src) {
+        alert("Please upload an image before generating pixel art!");
+        return;
+    }
+
+    const spinner = document.getElementById("spinner");
+    spinner.classList.remove("hidden"); // Show spinner
+
+    const pixelSize = parseInt(pixelSizeSelect.value);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+    const img = new Image();
+    img.onload = () => {
+        const width = img.width;
+        const height = img.height;
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        for (let y = 0; y < height; y += pixelSize) {
+            for (let x = 0; x < width; x += pixelSize) {
+                const pixel = ctx.getImageData(x, y, 1, 1).data;
+                ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+                ctx.fillRect(x, y, pixelSize, pixelSize);
+            }
         }
 
-        const pixelSize = parseInt(pixelSizeSelect.value);
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        addGeneratedImage(canvas.toDataURL("image/png"));
+        spinner.classList.add("hidden"); // Hide spinner
+    };
+    img.onerror = () => {
+        alert("Error loading image. Please try again.");
+        spinner.classList.add("hidden"); // Hide spinner in case of an error
+    };
+    img.src = uploadedImage.src;
+});
 
-        const img = new Image();
-        img.onload = () => {
-            const width = img.width;
-            const height = img.height;
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.drawImage(img, 0, 0, width, height);
-
-            for (let y = 0; y < height; y += pixelSize) {
-                for (let x = 0; x < width; x += pixelSize) {
-                    const pixel = ctx.getImageData(x, y, 1, 1).data;
-                    ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-                    ctx.fillRect(x, y, pixelSize, pixelSize);
-                }
-            }
-
-            addGeneratedImage(canvas.toDataURL("image/png"));
-        };
-        img.src = uploadedImage.src;
-    });
 </script>
