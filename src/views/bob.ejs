@@ -76,30 +76,7 @@
 
         <!-- Right Column -->
         <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 p-2 border border-gray-700 rounded-lg h-auto md:h-[calc(100vh-2rem)] md:overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800" id="generatedImages">
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
+            <!-- Placeholders -->
             <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
                 <span class="text-gray-400">Generated Image</span>
             </div>
@@ -123,7 +100,6 @@
     const pixelSizeSelect = document.getElementById("pixelSize");
     const generatedImages = document.getElementById("generatedImages");
 
-    // Save generated images to local storage
     function saveGeneratedImagesToLocalStorage() {
         const images = [];
         generatedImages.querySelectorAll("img").forEach((img) => {
@@ -132,75 +108,97 @@
         localStorage.setItem("generatedImages", JSON.stringify(images));
     }
 
-    // Load images from local storage
     function loadGeneratedImagesFromLocalStorage() {
         const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
+
+        // Clear dynamic content
+        generatedImages.querySelectorAll("img").forEach((img) => img.parentElement.remove());
+
+        // Add images from local storage
         images.forEach((src) => {
-            const container = document.createElement("div");
-            container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
-            const imageElement = document.createElement("img");
-            imageElement.src = src;
-            imageElement.className = "w-full h-full object-contain";
-
-            container.appendChild(imageElement);
+            const container = createImageContainer(src);
             generatedImages.appendChild(container);
         });
+
+        // Add placeholders if less than 12 items exist
+        while (generatedImages.children.length < 12) {
+            generatedImages.appendChild(createPlaceholder());
+        }
+    }
+    function addGeneratedImage(imageSrc) {
+    const container = createImageContainer(imageSrc);
+
+    // Check for the first placeholder to replace
+    const firstPlaceholder = generatedImages.querySelector(".bg-gray-800:not(:has(img))");
+    if (firstPlaceholder) {
+        // Replace the first placeholder with the new image
+        generatedImages.replaceChild(container, firstPlaceholder);
+    } else {
+        // No placeholders available, prepend the new image to the grid
+        generatedImages.insertBefore(container, generatedImages.firstChild);
     }
 
-    // Add generated image to the right column with limit enforcement
-    function addGeneratedImage(imageSrc) {
+    // Limit the grid to a maximum of 12 elements
+    const items = generatedImages.querySelectorAll(".bg-gray-800");
+    while (items.length > 12) {
+        generatedImages.removeChild(items[items.length - 1]); // Remove the last item to maintain the limit
+    }
+
+    // Update local storage
+    const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
+    images.unshift(imageSrc); // Add the new image to the start of the array
+    if (images.length > 12) {
+        images.pop(); // Remove the oldest image from storage
+    }
+    localStorage.setItem("generatedImages", JSON.stringify(images));
+}
+
+    function createImageContainer(src) {
         const container = document.createElement("div");
         container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
 
         const imageElement = document.createElement("img");
-        imageElement.src = imageSrc;
+        imageElement.src = src;
         imageElement.className = "w-full h-full object-contain";
 
         container.appendChild(imageElement);
-
-        // Prepend the new image
-        generatedImages.prepend(container);
-
-        // Enforce a maximum of 12 images
-        while (generatedImages.children.length > 12) {
-            generatedImages.removeChild(generatedImages.lastChild); // Remove the oldest image (last child)
-        }
-
-        // Save current images to local storage
-        saveGeneratedImagesToLocalStorage();
+        return container;
     }
 
-    // Load images on page load
-    window.addEventListener("DOMContentLoaded", () => {
-        loadGeneratedImagesFromLocalStorage();
-    });
+    function createPlaceholder() {
+        const placeholder = document.createElement("div");
+        placeholder.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+        const span = document.createElement("span");
+        span.className = "text-gray-400";
+        span.textContent = "Generated Image";
+        placeholder.appendChild(span);
+        return placeholder;
+    }
 
-    // Handle image upload
+    window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
+
     uploadImageInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (event) => {
-            uploadedImage.src = event.target.result; // Display uploaded image
-            uploadedImage.classList.remove("hidden"); // Show the image
-            uploadPlaceholder.classList.add("hidden"); // Hide the placeholder
-            clearImageContainer.classList.remove("hidden"); // Show the "Clear Image" button
+            uploadedImage.src = event.target.result;
+            uploadedImage.classList.remove("hidden");
+            uploadPlaceholder.classList.add("hidden");
+            clearImageContainer.classList.remove("hidden");
         };
         reader.readAsDataURL(file);
     });
 
-    // Handle clearing the uploaded image
     clearImageButton.addEventListener("click", () => {
-        uploadedImage.src = ""; // Clear the image source
-        uploadedImage.classList.add("hidden"); // Hide the image
-        uploadPlaceholder.classList.remove("hidden"); // Show the placeholder
-        uploadImageInput.value = ""; // Reset the file input
-        clearImageContainer.classList.add("hidden"); // Hide the "Clear Image" button
+        uploadedImage.src = "";
+        uploadedImage.classList.add("hidden");
+        uploadPlaceholder.classList.remove("hidden");
+        uploadImageInput.value = "";
+        clearImageContainer.classList.add("hidden");
     });
 
-    // Handle pixel art generation
     generateButton.addEventListener("click", () => {
         if (!uploadedImage.src) {
             alert("Please upload an image before generating pixel art!");
@@ -213,23 +211,18 @@
 
         const img = new Image();
         img.onload = () => {
-            const width = img.width;
-            const height = img.height;
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
 
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Apply pixelation
-            for (let y = 0; y < height; y += pixelSize) {
-                for (let x = 0; x < width; x += pixelSize) {
+            for (let y = 0; y < img.height; y += pixelSize) {
+                for (let x = 0; x < img.width; x += pixelSize) {
                     const pixel = ctx.getImageData(x, y, 1, 1).data;
                     ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
                     ctx.fillRect(x, y, pixelSize, pixelSize);
                 }
             }
 
-            // Add generated image
             addGeneratedImage(canvas.toDataURL("image/png"));
         };
         img.src = uploadedImage.src;
