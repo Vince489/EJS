@@ -1,0 +1,103 @@
+<div class="bg-gray-900 text-gray-200 min-h-screen flex justify-center px-4">
+    <div class="flex flex-col md:flex-row gap-6 w-full max-w-screen-xl">
+        <!-- Left Column -->
+        <div class="flex-1 bg-gray-800 p-6 rounded-lg">
+            <!-- Dropdown -->
+            <div class="mb-6">
+                <label for="dropdown" class="block text-sm font-medium mb-2">Generation Model</label>
+                <select id="dropdown" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500">
+                    <option value="ZP1.5">ZP1.5: Quantizer</option>
+                    <option value="ZP2.0">ZP2.0: Quantizer Pro</option>
+                    <option value="ZP1.0">ZP1.0: Quantizer Touch</option>
+                    <option value="ZP2.0">ZP2.0: Glitch</option>
+                    <option value="ZP4.0">ZP4.0: Pixel Art</option>
+                </select>
+            </div>
+
+            <!-- Help Link -->
+            <a href="#" class="text-blue-400 hover:underline block mb-6">How to use in 5 minutes</a>
+
+            <!-- Textarea -->
+            <div class="mb-6">
+                <label for="prompt" class="block text-sm font-medium mb-2">Prompt</label>
+                <textarea id="prompt" placeholder="Describe the image" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500 h-36 resize-none"></textarea>
+            </div>
+
+<!-- Upload Container -->
+<div class="mb-6 flex flex-col md:flex-row">
+    <div class="w-full md:w-1/2 flex flex-col items-center justify-center max-w-sm h-60 border-2 border-dashed border-gray-600 rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 transition">
+      <label for="uploadImage" class="flex flex-col items-center justify-center h-full">
+        <span class="text-4xl text-gray-200 mb-2">&#x21E7;</span>
+        <p class="text-gray-400">Upload Input Image</p>
+      </label>
+      <input type="file" id="uploadImage" accept="image/*" class="hidden">
+    </div>
+  </div>
+  
+  
+
+            <!-- Add Step and Step Configuration -->
+            <div class="w-full p-4 bg-gray-800 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 transition">
+                        <span class="text-lg font-bold">+</span>
+                        <span>Add a step</span>
+                    </button>
+                    <select class="p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none">
+                        <option value="Pixelation">Pixelation</option>
+                        <option value="Blur">Blur</option>
+                        <option value="Sharpness">Sharpness</option>
+                    </select>
+                </div>
+
+                <!-- Step Configuration -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-semibold text-lg">STEP 1: Pixelation</h2>
+                        <button class="text-red-500 hover:text-red-600 transition">
+                            <span class="sr-only">Delete</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Pixelation Size: <span class="font-bold text-blue-400">128</span></label>
+                        <input type="range" min="1" max="256" value="128" class="w-full accent-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Number of Colors: <span class="font-bold text-blue-400">16</span></label>
+                        <input type="range" min="1" max="128" value="16" class="w-full accent-blue-600">
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- Right Column -->
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 p-2 border border-gray-700 rounded-lg h-auto md:h-[calc(100vh-2rem)] md:overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 1</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 2</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 3</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 4</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 5</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 6</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 7</span>
+    </div>
+    <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+      <span class="text-gray-400">Generated Image 8</span>
+    </div>
+  </div>    
+    </div>
+</div>
