@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const expressLayouts = require('express-ejs-layouts'); // Import express-ejs-layouts
+const expressLayouts = require('express-ejs-layouts'); 
 
 const app = express();
 const PORT = 3021; // Change the port if needed
@@ -22,12 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Example route
 app.get('/', (req, res) => {
-  res.render('index', { title: 'Welcome to EJS with Layouts' }); // Content goes into the layout
-});
-
-// Example route for another page
-app.get('/about', (req, res) => {
-  res.render('about', { title: 'About Us' });
+  res.render('index', { title: 'Welcome to EJS with Layouts' }); 
 });
 
 app.get('/links', (req, res) => {
