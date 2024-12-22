@@ -4,9 +4,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./src/index",
-    "start": "node index",
+    "start": "node ./src/index",
     "css:watch": "npx tailwindcss -i ./src/public/css/tailwind.css -o ./src/public/css/style.css --watch",
-    "css:build": "npx tailwindcss -i ./src/public/css/tailwind.css -o ./src/public/css/style.css --minify"
+    "css:build": "npx tailwindcss -i ./src/public/css/tailwind.css -o ./src/public/css/style.css --minify",
+    "postinstall": "npm run css:build"
   },
   "keywords": [],
   "author": "",
