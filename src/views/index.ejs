@@ -59,8 +59,15 @@
             <div class="mb-6">
                 <label for="pixelSize" class="block text-sm font-medium mb-2">Choose Pixel Size:</label>
                 <select id="pixelSize" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500">
+                    <option value="2">2x2</option>
+                    <option value="3">3x3</option>
                     <option value="4">4x4</option>
+                    <option value="5">5x5</option>
+                    <option value="6">6x6</option>
+                    <option value="7">7x7</option>
                     <option value="8">8x8</option>
+                    <option value="9">9x9</option>
+                    <option value="10">10x10</option>
                     <option value="12">12x12</option>
                     <option value="16">16x16</option>
                     <option value="24">24x24</option>
@@ -177,7 +184,7 @@
 
         const pixelSize = parseInt(pixelSizeSelect.value);
         const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
         const img = new Image();
         img.onload = () => {
