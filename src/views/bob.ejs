@@ -189,6 +189,33 @@
         ensure12Items(); // Ensure 12 items
     }
 
+    function pixelateImage(imgSrc, pixelSize, callback) {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Set canvas dimensions to match the image
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the image on the canvas
+            ctx.drawImage(img, 0, 0);
+
+            // Pixelate the image by sampling blocks
+            for (let y = 0; y < img.height; y += pixelSize) {
+                for (let x = 0; x < img.width; x += pixelSize) {
+                    const pixelData = ctx.getImageData(x, y, 1, 1).data;
+                    ctx.fillStyle = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+                    ctx.fillRect(x, y, pixelSize, pixelSize);
+                }
+            }
+
+            callback(canvas.toDataURL("image/png"));
+        };
+        img.src = imgSrc;
+    }
+
     generateButton.addEventListener("click", () => {
         if (!uploadedImage.src) {
             alert("Please upload an image before generating pixel art!");
@@ -207,17 +234,19 @@
         // Smoothly scroll to the spinner container
         container.scrollIntoView({ behavior: "smooth", block: "center" });
 
-        // Simulate image generation
-        setTimeout(() => {
+        const pixelSize = parseInt(pixelSizeSelect.value);
+
+        // Generate pixelated image
+        pixelateImage(uploadedImage.src, pixelSize, (pixelatedImage) => {
             spinner.remove(); // Remove spinner
             const imageElement = document.createElement("img");
-            imageElement.src = uploadedImage.src; // Use the uploaded image as generated
+            imageElement.src = pixelatedImage;
             imageElement.className = "w-full h-full object-contain";
             container.appendChild(imageElement);
 
             ensure12Items(); // Ensure only 12 items
             saveGeneratedImagesToLocalStorage();
-        }, 2000); // Simulate delay for processing
+        });
     });
 
     uploadImageInput.addEventListener("change", event => {
@@ -243,6 +272,7 @@
 
     window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
 </script>
+
 
 
 
