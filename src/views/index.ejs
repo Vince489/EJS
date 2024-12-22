@@ -45,7 +45,7 @@
 
             <!-- Upload Container -->
             <div class="mb-6">
-                <!-- Image Upload Container -->
+                <!-- Image Upload Container -->                
                 <div class="relative w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-lg bg-gray-700 hover:bg-gray-600 transition">
                     <img id="uploadedImage" src="" alt="Uploaded Image" class="w-full object-contain rounded-lg hidden" />
                     <label for="uploadImage" id="uploadPlaceholder" class="flex flex-col items-center justify-center h-60 cursor-pointer">
@@ -101,7 +101,33 @@
             <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
                 <span class="text-gray-400">Generated Image</span>
             </div>
-            <!-- Repeat the above div structure to create 12 placeholders -->
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
+            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
+                <span class="text-gray-400">Generated Image</span>
+            </div>
         </div>
     </div>
 </div>
@@ -116,126 +142,91 @@
     const pixelSizeSelect = document.getElementById("pixelSize");
     const generatedImages = document.getElementById("generatedImages");
 
-    // Add generated image and remove placeholder if necessary
+    function ensure12Items() {
+        while (generatedImages.children.length > 12) {
+            generatedImages.removeChild(generatedImages.lastChild); // Remove oldest item
+        }
+
+        while (generatedImages.children.length < 12) {
+            const placeholder = document.createElement("div");
+            placeholder.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+            const span = document.createElement("span");
+            span.className = "text-gray-400";
+            span.textContent = "Generated Image";
+            placeholder.appendChild(span);
+            generatedImages.appendChild(placeholder); // Add placeholder if less than 12
+        }
+    }
+
     function addGeneratedImage(imageSrc) {
         const container = document.createElement("div");
         container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
         const imageElement = document.createElement("img");
         imageElement.src = imageSrc;
         imageElement.className = "w-full h-full object-contain";
-
         container.appendChild(imageElement);
 
-        // Add the new image to the grid and remove the oldest item if necessary
-        generatedImages.prepend(container);
-        if (generatedImages.children.length > 12) {
-            generatedImages.removeChild(generatedImages.lastChild);
-        }
-
+        generatedImages.prepend(container); // Add to the top
+        ensure12Items(); // Enforce 12 items in the grid
         saveGeneratedImagesToLocalStorage();
+
+        // Smoothly scroll to the newly added item
+        container.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function saveGeneratedImagesToLocalStorage() {
-    const images = [];
-    generatedImages.querySelectorAll("img").forEach((img) => {
-        images.push(img.src); // Save image URLs in order
-    });
-    localStorage.setItem("generatedImages", JSON.stringify(images));
-}
-
-function loadGeneratedImagesFromLocalStorage() {
-    const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
-    generatedImages.innerHTML = ""; // Clear the grid
-
-    // Load images in the same order they were saved
-    images.forEach((src) => {
-        const container = document.createElement("div");
-        container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
-        const imageElement = document.createElement("img");
-        imageElement.src = src;
-        imageElement.className = "w-full h-full object-contain";
-
-        container.appendChild(imageElement);
-        generatedImages.appendChild(container);
-    });
-
-    // Add placeholders if less than 12 items exist
-    while (generatedImages.children.length < 12) {
-        const placeholder = document.createElement("div");
-        placeholder.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-        const span = document.createElement("span");
-        span.className = "text-gray-400";
-        span.textContent = "Generated Image";
-        placeholder.appendChild(span);
-        generatedImages.appendChild(placeholder);
+        const images = Array.from(generatedImages.querySelectorAll("img")).map(img => img.src);
+        localStorage.setItem("generatedImages", JSON.stringify(images)); // Save order as seen
     }
-}
 
-    // Event listeners for generating and clearing images
+    function loadGeneratedImagesFromLocalStorage() {
+        const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
+        generatedImages.innerHTML = ""; // Clear grid
+
+        // Add saved images in reverse to maintain the order
+        images.reverse().forEach(src => addGeneratedImage(src));
+
+        ensure12Items(); // Ensure 12 items
+    }
+
     generateButton.addEventListener("click", () => {
-    if (!uploadedImage.src) {
-        alert("Please upload an image before generating pixel art!");
-        return;
-    }
+        if (!uploadedImage.src) {
+            alert("Please upload an image before generating pixel art!");
+            return;
+        }
 
-    // Create container for spinner and final image
-    const container = document.createElement("div");
-    container.className = "relative bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+        // Create container for spinner and add it to the top of the grid
+        const container = document.createElement("div");
+        container.className = "relative bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
 
-    // Add spinner
-    const spinner = document.createElement("div");
-    spinner.className = "absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70";
-    spinner.innerHTML = `<div class="loader border-4 border-gray-600 border-t-blue-500 rounded-full h-10 w-10 animate-spin"></div>`;
-    container.appendChild(spinner);
+        const spinner = document.createElement("div");
+        spinner.className = "loader"; // Spinner class from the <style>
+        container.appendChild(spinner);
+        generatedImages.prepend(container);
 
-    // Add container to generated images
-    generatedImages.prepend(container);
+        // Smoothly scroll to the spinner container
+        container.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Smoothly scroll to the newly added container
-    container.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // Simulate pixel art generation
-    setTimeout(() => {
-        spinner.remove();
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        const img = new Image();
-        img.onload = () => {
-            const width = img.width;
-            const height = img.height;
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.drawImage(img, 0, 0, width, height);
-
-            for (let y = 0; y < height; y += parseInt(pixelSizeSelect.value)) {
-                for (let x = 0; x < width; x += parseInt(pixelSizeSelect.value)) {
-                    const pixel = ctx.getImageData(x, y, 1, 1).data;
-                    ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-                    ctx.fillRect(x, y, parseInt(pixelSizeSelect.value), parseInt(pixelSizeSelect.value));
-                }
-            }
-
+        // Simulate image generation
+        setTimeout(() => {
+            spinner.remove(); // Remove spinner
             const imageElement = document.createElement("img");
-            imageElement.src = canvas.toDataURL("image/png");
+            imageElement.src = uploadedImage.src; // Use the uploaded image as generated
             imageElement.className = "w-full h-full object-contain";
             container.appendChild(imageElement);
 
+            ensure12Items(); // Ensure only 12 items
             saveGeneratedImagesToLocalStorage();
-        };
-        img.src = uploadedImage.src;
-    }, 2000);
-});
+        }, 2000); // Simulate delay for processing
+    });
 
-    uploadImageInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
+    uploadImageInput.addEventListener("change", event => {
+        const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (event) => {
-            uploadedImage.src = event.target.result;
+        reader.onload = e => {
+            uploadedImage.src = e.target.result;
             uploadedImage.classList.remove("hidden");
             uploadPlaceholder.classList.add("hidden");
             clearImageContainer.classList.remove("hidden");
@@ -247,9 +238,11 @@ function loadGeneratedImagesFromLocalStorage() {
         uploadedImage.src = "";
         uploadedImage.classList.add("hidden");
         uploadPlaceholder.classList.remove("hidden");
-        uploadImageInput.value = "";
         clearImageContainer.classList.add("hidden");
     });
 
     window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
 </script>
+
+
+
