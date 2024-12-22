@@ -1,0 +1,147 @@
+<!-- <script>
+    const uploadImageInput = document.getElementById("uploadImage");
+    const uploadedImage = document.getElementById("uploadedImage");
+    const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+    const clearImageContainer = document.getElementById("clearImageContainer");
+    const clearImageButton = document.getElementById("clearImageButton");
+    const generateButton = document.getElementById("generateButton");
+    const pixelSizeSelect = document.getElementById("pixelSize");
+    const generatedImages = document.getElementById("generatedImages");
+
+    // Add generated image and remove placeholder if necessary
+    function addGeneratedImage(imageSrc) {
+        const container = document.createElement("div");
+        container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+
+        const imageElement = document.createElement("img");
+        imageElement.src = imageSrc;
+        imageElement.className = "w-full h-full object-contain";
+
+        container.appendChild(imageElement);
+
+        // Add the new image to the grid and remove the oldest item if necessary
+        generatedImages.prepend(container);
+        if (generatedImages.children.length > 12) {
+            generatedImages.removeChild(generatedImages.lastChild);
+        }
+
+        saveGeneratedImagesToLocalStorage();
+    }
+
+    function saveGeneratedImagesToLocalStorage() {
+    const images = [];
+    generatedImages.querySelectorAll("img").forEach((img) => {
+        images.push(img.src); // Save image URLs in order
+    });
+    localStorage.setItem("generatedImages", JSON.stringify(images));
+}
+
+function loadGeneratedImagesFromLocalStorage() {
+    const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
+    generatedImages.innerHTML = ""; // Clear the grid
+
+    // Load images in the same order they were saved
+    images.forEach((src) => {
+        const container = document.createElement("div");
+        container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+
+        const imageElement = document.createElement("img");
+        imageElement.src = src;
+        imageElement.className = "w-full h-full object-contain";
+
+        container.appendChild(imageElement);
+        generatedImages.appendChild(container);
+    });
+
+    // Add placeholders if less than 12 items exist
+    while (generatedImages.children.length < 12) {
+        const placeholder = document.createElement("div");
+        placeholder.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+        const span = document.createElement("span");
+        span.className = "text-gray-400";
+        span.textContent = "Generated Image";
+        placeholder.appendChild(span);
+        generatedImages.appendChild(placeholder);
+    }
+}
+
+    // Event listeners for generating and clearing images
+    generateButton.addEventListener("click", () => {
+    if (!uploadedImage.src) {
+        alert("Please upload an image before generating pixel art!");
+        return;
+    }
+
+    // Create container for spinner and final image
+    const container = document.createElement("div");
+    container.className = "relative bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
+
+    // Add spinner
+    const spinner = document.createElement("div");
+    spinner.className = "absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70";
+    spinner.innerHTML = `<div class="loader border-4 border-gray-600 border-t-blue-500 rounded-full h-10 w-10 animate-spin"></div>`;
+    container.appendChild(spinner);
+
+    // Add container to generated images
+    generatedImages.prepend(container);
+
+    // Smoothly scroll to the newly added container
+    container.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Simulate pixel art generation
+    setTimeout(() => {
+        spinner.remove();
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        const img = new Image();
+        img.onload = () => {
+            const width = img.width;
+            const height = img.height;
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.drawImage(img, 0, 0, width, height);
+
+            for (let y = 0; y < height; y += parseInt(pixelSizeSelect.value)) {
+                for (let x = 0; x < width; x += parseInt(pixelSizeSelect.value)) {
+                    const pixel = ctx.getImageData(x, y, 1, 1).data;
+                    ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+                    ctx.fillRect(x, y, parseInt(pixelSizeSelect.value), parseInt(pixelSizeSelect.value));
+                }
+            }
+
+            const imageElement = document.createElement("img");
+            imageElement.src = canvas.toDataURL("image/png");
+            imageElement.className = "w-full h-full object-contain";
+            container.appendChild(imageElement);
+
+            saveGeneratedImagesToLocalStorage();
+        };
+        img.src = uploadedImage.src;
+    }, 2000);
+});
+
+    uploadImageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            uploadedImage.src = event.target.result;
+            uploadedImage.classList.remove("hidden");
+            uploadPlaceholder.classList.add("hidden");
+            clearImageContainer.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+    });
+
+    clearImageButton.addEventListener("click", () => {
+        uploadedImage.src = "";
+        uploadedImage.classList.add("hidden");
+        uploadPlaceholder.classList.remove("hidden");
+        uploadImageInput.value = "";
+        clearImageContainer.classList.add("hidden");
+    });
+
+    window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
+</script> -->
