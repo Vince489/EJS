@@ -1,255 +1,196 @@
-<style>
-    .loader {
-        border: 6px solid rgba(0, 0, 0, 0.1); /* Larger border */
-        border-top: 6px solid #3498db; /* Top border color */
-        border-radius: 50%; /* Makes it circular */
-        width: 60px; /* Larger width */
-        height: 60px; /* Larger height */
-        animation: spin 1s linear infinite; /* Spin animation */
-    }
 
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
+    <style>
+
+        .sidebar {
+            height: calc(100vh - 64px);
+            overflow-y: auto;
         }
-        100% {
-            transform: rotate(360deg);
+        
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
         }
-    }
-</style>
 
-<div class="bg-gray-900 text-gray-200 min-h-screen flex justify-center px-4">
-    <div class="flex flex-col md:flex-row gap-6 w-full max-w-screen-xl">
-        <!-- Left Column -->
-        <div class="flex-1 bg-gray-800 p-6 rounded-lg">
-            <!-- Dropdown -->
-            <div class="mb-6">
-                <label for="dropdown" class="block text-sm font-medium mb-2">Generation Model</label>
-                <select id="dropdown" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500">
-                    <option value="ZP1.5">ZP1.5: Quantizer</option>
-                    <option value="ZP2.0">ZP2.0: Quantizer Pro</option>
-                    <option value="ZP1.0">ZP1.0: Quantizer Touch</option>
-                    <option value="ZP2.0">ZP2.0: Glitch</option>
-                    <option value="ZP4.0">ZP4.0: Pixel Art</option>
-                </select>
-            </div>
+        #palette {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: flex-start;
+      }
 
-            <!-- Help Link -->
-            <a href="#" class="text-blue-400 hover:underline block mb-6">How to use in 5 minutes</a>
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
 
-            <!-- Textarea -->
-            <div class="mb-6">
-                <label for="prompt" class="block text-sm font-medium mb-2">Prompt</label>
-                <textarea id="prompt" placeholder="Describe the image" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500 h-36 resize-none"></textarea>
-            </div>
+        .category {
+            margin-bottom: 1rem;
+        }
 
-            <!-- Upload Container -->
-            <div class="mb-6">
-                <!-- Image Upload Container -->
-                <div class="relative w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-lg bg-gray-700 hover:bg-gray-600 transition">
-                    <img id="uploadedImage" src="" alt="Uploaded Image" class="w-full object-contain rounded-lg hidden" />
-                    <label for="uploadImage" id="uploadPlaceholder" class="flex flex-col items-center justify-center h-60 cursor-pointer">
-                        <span class="text-4xl text-gray-200 mb-2">&#x21E7;</span>
-                        <p class="text-gray-400">Upload Input Image</p>
+        select, input, button {
+            width: 100%;
+            margin-bottom: 0.75rem;
+        }
+        
+        canvas {
+            max-width: 100%;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            margin: 0.5em;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <header class="bg-gray-800 shadow-lg h-16 flex items-center justify-center">
+        <h1 class="text-2xl font-bold">Pixel Art Creator</h1>
+    </header>
+    
+    <div class="flex">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-gray-800 sidebar">
+            <div class="p-4" id="leftSidebar">
+                <h2 class="text-xl font-semibold mb-4">Upload Image</h2>
+                <div class="mb-4">
+                    <!-- Styled file input button to override default -->
+                    <label for="imageInput" class="w-full text-sm text-gray-300 cursor-pointer bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded">
+                      Choose Image
                     </label>
-                    <input type="file" id="uploadImage" accept="image/*" class="hidden">
+                    <input type="file" id="imageInput" accept="image/*" class="hidden" />                
+                </div>
+              
+                <div class="category">
+                    <h3 class="font-medium mb-2">Quantization Models</h3>
+                    <select class="dropdown bg-gray-700 border-gray-600 rounded p-2 w-full">
+                        <option value="">-- Choose a Model --</option>
+                        <option>Auto</option>
+                        <option>Euclidean/LAB</option>
+                        <option>Wu’s Method</option>
+                        <option>NeuQuant</option>
+                        <option>Median Cut</option>
+                        <option>Octree</option>
+                        <option>K-Means</option>
+                    </select>
+                </div>
+                
+                <button id="addColor" class="bg-green-600 hover:bg-green-700 rounded py-2 px-4 w-full mb-3 transition">Add Color</button>
+                <button id="applyQuantization" class="bg-purple-600 hover:bg-purple-700 rounded py-2 px-4 w-full mb-5 transition">Apply Quantization</button>
+                
+                <!-- Pixelation Options -->
+                <div class="mb-2">
+                    <label for="pixelScale" class="block mb-1">Pixelation Scale (1-10):</label>
+                    <select id="pixelScale" class="bg-gray-700 border-gray-600 rounded p-2 w-full mb-3">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                
+                <button id="applyPixelation" class="bg-indigo-600 hover:bg-indigo-700 rounded py-2 px-4 w-full mb-3 transition">Apply Pixelation</button>
+                
+                <button id="downloadImage" class="bg-yellow-600 hover:bg-yellow-700 rounded py-2 px-4 w-full mb-3 transition">Download Image</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 p-6 flex flex-col" id="center">
+            <h2 class="text-2xl font-bold mb-4">Image Editor</h2>
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg flex-1 flex flex-col">
+                <p class="mb-4">Upload an image or click on the canvas to pick colors. Click on the image to add colors to your palette.</p>
+                
+                <div class="flex-1 flex items-center justify-center">
+                    <canvas id="canvas" class="border border-gray-600 bg-gray-700"></canvas>
                 </div>
             </div>
+        </main>
+        
+        <!-- Right Sidebar -->
+<!-- Right Sidebar -->
+<aside class="w-64 bg-gray-800 sidebar" id="rightSidebar">
+  <div class="p-4">
+      <h2 class="text-xl font-semibold mb-4">Generated Palette</h2>
+      <div id="palette" class="flex flex-wrap gap-2 bg-gray-700 p-3 rounded-lg min-h-32 w-full">
+          <!-- Palette colors will be added here dynamically -->
+      </div>
 
-            <!-- Clear Image Button -->
-            <div id="clearImageContainer" class="flex justify-center mt-4 mb-6 hidden">
-                <button id="clearImageButton" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition">
-                    Clear Image
-                </button>
-            </div>
+      <div class="mt-6">
+          <h3 class="font-medium mb-2">Select a Palette</h3>
+          <select id="loadPalette" class="bg-gray-700 border-gray-600 rounded p-2 w-full mb-3">
+              <option value="">-- Select a Palette --</option>
+          </select>
+      </div>
 
-            <!-- Pixel Size Selection -->
-            <div class="mb-6">
-                <label for="pixelSize" class="block text-sm font-medium mb-2">Choose Pixel Size:</label>
-                <select id="pixelSize" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-500">
-                    <option value="2">2x2</option>
-                    <option value="3">3x3</option>
-                    <option value="4">4x4</option>
-                    <option value="5">5x5</option>
-                    <option value="6">6x6</option>
-                    <option value="7">7x7</option>
-                    <option value="8">8x8</option>
-                    <option value="9">9x9</option>
-                    <option value="10">10x10</option>
-                    <option value="12">12x12</option>
-                    <option value="16">16x16</option>
-                    <option value="24">24x24</option>
-                    <option value="32">32x32</option>
-                </select>
-            </div>
+      <h3 class="font-medium mb-2">Create a Palette</h3>
 
-            <!-- Generate Button -->
-            <button id="generateButton" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">
-                Generate Pixel Art
-            </button>
-        </div>
+      <input type="text" id="paletteName" placeholder="Enter new palette name" class="bg-gray-700 border-gray-600 rounded p-2 w-full mb-3 placeholder-gray-400">
 
-        <!-- Right Column -->
-        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 p-2 border border-gray-700 rounded-lg h-auto md:h-[calc(100vh-2rem)] md:overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800" id="generatedImages">
-            <!-- 12 Placeholders -->
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <div class="bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition">
-                <span class="text-gray-400">Generated Image</span>
-            </div>
-            <!-- Repeat the above div structure to create 12 placeholders -->
-        </div>
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <button id="savePalette" class="bg-blue-600 hover:bg-blue-700 rounded py-2 px-4 transition">Save Palette</button>
+        <button id="deletePalette" class="bg-red-600 hover:bg-red-700 rounded py-2 px-4 transition">Delete Palette</button>
+      </div>
+      
+      <div class="mt-6">
+          <h3 class="font-medium mb-2">Image Information</h3>
+          <div class="bg-gray-700 p-3 rounded-lg">
+              <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                      <span>Dimensions:</span>
+                      <span id="imageDimensions">-</span>
+                  </div>
+                  <div class="flex justify-between">
+                      <span>Colors in palette:</span>
+                      <span id="colorCount">0</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="mt-4">
+          <h3 class="font-medium mb-2">Color Info</h3>
+          <div id="colorInfo" class="bg-gray-700 p-3 rounded-lg">
+              <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                      <span>R:</span>
+                      <span id="colorR">-</span>
+                  </div>
+                  <div class="flex justify-between">
+                      <span>G:</span>
+                      <span id="colorG">-</span>
+                  </div>
+                  <div class="flex justify-between">
+                      <span>B:</span>
+                      <span id="colorB">-</span>
+                  </div>
+                  <div class="flex justify-between">
+                      <span>Hex:</span>
+                      <span id="colorHex">-</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</aside>
     </div>
-</div>
 
-<script>
-    const uploadImageInput = document.getElementById("uploadImage");
-    const uploadedImage = document.getElementById("uploadedImage");
-    const uploadPlaceholder = document.getElementById("uploadPlaceholder");
-    const clearImageContainer = document.getElementById("clearImageContainer");
-    const clearImageButton = document.getElementById("clearImageButton");
-    const generateButton = document.getElementById("generateButton");
-    const pixelSizeSelect = document.getElementById("pixelSize");
-    const generatedImages = document.getElementById("generatedImages");
-
-    // Add generated image and remove placeholder if necessary
-    function addGeneratedImage(imageSrc) {
-        const container = document.createElement("div");
-        container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
-        const imageElement = document.createElement("img");
-        imageElement.src = imageSrc;
-        imageElement.className = "w-full h-full object-contain";
-
-        container.appendChild(imageElement);
-
-        // Add the new image to the grid and remove the oldest item if necessary
-        generatedImages.prepend(container);
-        if (generatedImages.children.length > 12) {
-            generatedImages.removeChild(generatedImages.lastChild);
-        }
-
-        saveGeneratedImagesToLocalStorage();
-    }
-
-    function saveGeneratedImagesToLocalStorage() {
-    const images = [];
-    generatedImages.querySelectorAll("img").forEach((img) => {
-        images.push(img.src); // Save image URLs in order
-    });
-    localStorage.setItem("generatedImages", JSON.stringify(images));
-}
-
-function loadGeneratedImagesFromLocalStorage() {
-    const images = JSON.parse(localStorage.getItem("generatedImages")) || [];
-    generatedImages.innerHTML = ""; // Clear the grid
-
-    // Load images in the same order they were saved
-    images.forEach((src) => {
-        const container = document.createElement("div");
-        container.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
-        const imageElement = document.createElement("img");
-        imageElement.src = src;
-        imageElement.className = "w-full h-full object-contain";
-
-        container.appendChild(imageElement);
-        generatedImages.appendChild(container);
-    });
-
-    // Add placeholders if less than 12 items exist
-    while (generatedImages.children.length < 12) {
-        const placeholder = document.createElement("div");
-        placeholder.className = "bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-        const span = document.createElement("span");
-        span.className = "text-gray-400";
-        span.textContent = "Generated Image";
-        placeholder.appendChild(span);
-        generatedImages.appendChild(placeholder);
-    }
-}
-
-    // Event listeners for generating and clearing images
-    generateButton.addEventListener("click", () => {
-    if (!uploadedImage.src) {
-        alert("Please upload an image before generating pixel art!");
-        return;
-    }
-
-    // Create container for spinner and final image
-    const container = document.createElement("div");
-    container.className = "relative bg-gray-800 h-60 p-6 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-gray-500 transition";
-
-    // Add spinner
-    const spinner = document.createElement("div");
-    spinner.className = "absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70";
-    spinner.innerHTML = `<div class="loader border-4 border-gray-600 border-t-blue-500 rounded-full h-10 w-10 animate-spin"></div>`;
-    container.appendChild(spinner);
-
-    // Add container to generated images
-    generatedImages.prepend(container);
-
-    // Smoothly scroll to the newly added container
-    container.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // Simulate pixel art generation
-    setTimeout(() => {
-        spinner.remove();
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        const img = new Image();
-        img.onload = () => {
-            const width = img.width;
-            const height = img.height;
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.drawImage(img, 0, 0, width, height);
-
-            for (let y = 0; y < height; y += parseInt(pixelSizeSelect.value)) {
-                for (let x = 0; x < width; x += parseInt(pixelSizeSelect.value)) {
-                    const pixel = ctx.getImageData(x, y, 1, 1).data;
-                    ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-                    ctx.fillRect(x, y, parseInt(pixelSizeSelect.value), parseInt(pixelSizeSelect.value));
-                }
-            }
-
-            const imageElement = document.createElement("img");
-            imageElement.src = canvas.toDataURL("image/png");
-            imageElement.className = "w-full h-full object-contain";
-            container.appendChild(imageElement);
-
-            saveGeneratedImagesToLocalStorage();
-        };
-        img.src = uploadedImage.src;
-    }, 2000);
-});
-
-    uploadImageInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            uploadedImage.src = event.target.result;
-            uploadedImage.classList.remove("hidden");
-            uploadPlaceholder.classList.add("hidden");
-            clearImageContainer.classList.remove("hidden");
-        };
-        reader.readAsDataURL(file);
-    });
-
-    clearImageButton.addEventListener("click", () => {
-        uploadedImage.src = "";
-        uploadedImage.classList.add("hidden");
-        uploadPlaceholder.classList.remove("hidden");
-        uploadImageInput.value = "";
-        clearImageContainer.classList.add("hidden");
-    });
-
-    window.addEventListener("DOMContentLoaded", loadGeneratedImagesFromLocalStorage);
-</script>
+<script src="script.js"></script>

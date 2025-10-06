@@ -3,7 +3,7 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts'); 
 
 const app = express();
-const PORT = 3021; // Change the port if needed
+const PORT = 3022; // Change the port if needed
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -31,6 +31,10 @@ app.get('/links', (req, res) => {
 
 app.get('/bob', (req, res) => {
     res.render('bob', { title: 'Bob Page' });
+});
+
+app.get('/index1', (req, res) => {
+    res.render('index1', { title: 'Tailwind' });
 });
 
 // Start the server
